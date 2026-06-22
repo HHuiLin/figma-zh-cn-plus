@@ -102,6 +102,7 @@
   const EDITABLE_VALUE_TIMER_KEY = "__figmaZhEditableValueTimer";
   const EDITABLE_VALUE_EVENT_KEY = "__figmaZhEditableValueEvents";
   const TRANSLATABLE_ATTRS = ["aria-label", "title", "placeholder"];
+  const ICON_ONLY_TRANSLATABLE_ATTRS = new Set(["aria-label", "title"]);
   const FONT_STYLE_RESTORABLE_ATTRS = ["aria-label", "title", "data-value", "aria-valuetext"];
 
   function normalizeText(value) {
@@ -485,7 +486,8 @@
     if (isUserNamedContentElement(element, element.getAttribute(name))) return false;
     if (isFontStyleAttributeValue(element, element.getAttribute(name))) return false;
     if (name === "placeholder") return true;
-    return !isIconOnlyControlElement(element);
+    if (isIconOnlyControlElement(element) && !ICON_ONLY_TRANSLATABLE_ATTRS.has(name)) return false;
+    return true;
   }
 
   function isProductFilterTerm(node) {

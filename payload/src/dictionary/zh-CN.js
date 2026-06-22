@@ -2389,6 +2389,10 @@
     "Packed": "堆叠",
     "Padding": "边距",
     "Padding around items": "内边距",
+    "Artboard & Grids": "画板与网格",
+    "Camera Control": "相机控制",
+    "Cover": "封面",
+    "Mockups": "样机",
     "Page": "页面",
     "Page content": "页面内容",
     "Page deleted": "页面已删除",
@@ -2407,6 +2411,8 @@
     "Page: Status & Home bar": "页面：状态栏与主页栏",
     "Page: Wallpapers": "页面：壁纸",
     "Pages": "页面",
+    "Status & Home bar": "状态栏与主页栏",
+    "Wallpapers": "壁纸",
     "Paid": "付费",
     "Paid + free": "付费 + 免费",
     "Paint": "油漆桶",
@@ -5114,6 +5120,6 @@
     uiTerms,
     commonTerms,
     patterns,
-    version: "1.0.4"
+    version: "1.0.5"
   };
 })();

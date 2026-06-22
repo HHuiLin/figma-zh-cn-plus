@@ -155,6 +155,12 @@ Assert-TextContains $dictionary '"Page: Wallpapers": "页面：壁纸"' "Communi
 Assert-TextContains $dictionary '"Page: Artboard & Grids": "页面：画板与网格"' "Community preview Artboard and Grids page label must be translated."
 Assert-TextContains $dictionary '"Page: Status & Home bar": "页面：状态栏与主页栏"' "Community preview Status and Home bar page label must be translated."
 Assert-TextContains $dictionary '"Page: Camera Control": "页面：相机控制"' "Community preview Camera Control page label must be translated."
+Assert-TextContains $dictionary '"Cover": "封面"' "Community preview Cover page menu item must be translated when Figma splits the page selector text."
+Assert-TextContains $dictionary '"Camera Control": "相机控制"' "Community preview Camera Control page menu item must be translated when shown as a page name."
+Assert-TextContains $dictionary '"Status & Home bar": "状态栏与主页栏"' "Community preview Status and Home bar page menu item must be translated when shown as a page name."
+Assert-TextContains $dictionary '"Mockups": "样机"' "Community preview Mockups page menu item must be translated when shown as a page name."
+Assert-TextContains $dictionary '"Wallpapers": "壁纸"' "Community preview Wallpapers page menu item must be translated when shown as a page name."
+Assert-TextContains $dictionary '"Artboard & Grids": "画板与网格"' "Community preview Artboard and Grids page menu item must be translated when shown as a page name."
 Assert-TextContains $dictionary '"Enter fullscreen": "进入全屏"' "Community preview fullscreen button must be translated."
 Assert-TextContains $dictionary '"Exit fullscreen": "退出全屏"' "Community preview fullscreen exit button must be translated."
 Assert-TextContains $dictionary '"Fit to screen": "适应屏幕"' "Community preview fit button must be translated."
@@ -351,6 +357,12 @@ if ($core -notmatch "cache\.delete\(cache\.keys\(\)\.next\(\)\.value\)") {
 }
 if ($core -notmatch 'const ICON_ONLY_TRANSLATABLE_ATTRS = new Set\(\["aria-label", "title"\]\)' -or $core -notmatch 'isIconOnlyControlElement\(element\) && !ICON_ONLY_TRANSLATABLE_ATTRS\.has\(name\)') {
   throw "Icon-only button aria labels and titles must be translated for tooltips and secondary controls."
+}
+if ($core -notmatch "function isCommunityPreviewPageControlElement" -or $core -notmatch "isCommunityPreviewPageControlElement\(parent, node\.nodeValue\)" -or $core -notmatch "PREVIEW_PAGE_MENU_TERMS") {
+  throw "Community preview page controls inside Figma viewport/canvas wrappers must not be skipped as canvas content."
+}
+if ($core -notmatch "return Boolean\(element\.closest\(FIGMA_VIEWPORT_SKIP_SELECTOR\) && \/\^Page:\/\.test\(text\)\);") {
+  throw "Community preview page control fallback must not translate ordinary canvas text just because a nearby page menu exists."
 }
 
 Write-Host "All tests passed."

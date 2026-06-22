@@ -24,7 +24,7 @@ if ($args -contains "-ForceClose" -or $args -contains "/ForceClose") { $ForceClo
 
 $PatchMarker = "FIGMA_ZH_OFFICIAL_MAIN_HOOK_V7"
 $UpdaterDisableMarker = "FIGMA_ZH_DISABLE_BUILTIN_UPDATER"
-$PatcherVersion = "0.3.6"
+$PatcherVersion = "0.3.7"
 $PayloadFile = "i.js"
 $MainPayloadFile = "m.js"
 $FeatureConfigFile = "features.json"
@@ -1212,7 +1212,7 @@ function Invoke-SelfTest {
     if ((Compare-VersionString "126.4.10" "126.3.12") -le 0) { throw "Self-test version compare failed." }
     if ((Compare-VersionString "126.3.12" "126.4.10") -ge 0) { throw "Self-test version compare failed." }
     if ((Compare-VersionString "126.3.12" "126.3.12") -ne 0) { throw "Self-test version compare failed." }
-    if ((Get-PatcherReleaseVersionFromText "v0.3.6") -ne "0.3.6") { throw "Self-test patcher release tag parse failed." }
+    if ((Get-PatcherReleaseVersionFromText "v0.3.7") -ne "0.3.7") { throw "Self-test patcher release tag parse failed." }
     if ((Get-PatcherReleaseVersionFromText "FigBoost 0.3.7") -ne "0.3.7") { throw "Self-test patcher release name parse failed." }
     if ((Get-FigmaInstallerVersionFromText "PK Figma-126.4.11-full.nupkg") -ne "126.4.11") { throw "Self-test installer version parse failed." }
     $selectedRelease = Select-LatestFigmaRelease @(

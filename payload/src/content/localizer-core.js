@@ -104,18 +104,6 @@
   const TRANSLATABLE_ATTRS = ["aria-label", "title", "placeholder"];
   const ICON_ONLY_TRANSLATABLE_ATTRS = new Set(["aria-label", "title"]);
   const FONT_STYLE_RESTORABLE_ATTRS = ["aria-label", "title", "data-value", "aria-valuetext"];
-  const FIGMA_VIEWPORT_SKIP_SELECTOR = "[data-testid='canvas'],[data-testid='canvas-root'],[data-testid='canvas_viewport'],[data-testid='fullscreen-viewport'],[data-testid='viewport'],[data-onboarding-key='canvas'],[data-figma-canvas='true']";
-  const PREVIEW_PAGE_CONTROL_SELECTOR = "button,[role='button'],[role='menuitem'],[role='option'],[role='menu'],[role='listbox'],[aria-haspopup],[aria-expanded],[data-testid*='page' i],[aria-label*='Page' i],[title*='Page' i]";
-  const PREVIEW_PAGE_MENU_TERMS = new Set([
-    "Page:",
-    "Cover",
-    "Camera Control",
-    "Status & Home bar",
-    "Mockups",
-    "Wallpapers",
-    "Artboard & Grids",
-    "Components"
-  ]);
 
   function normalizeText(value) {
     return String(value || "").replace(/\s+/g, " ").trim();
@@ -322,14 +310,12 @@
 
   function isSkippableElement(element) {
     if (!element || element.nodeType !== Node.ELEMENT_NODE) return false;
-    if (containsCommunityPreviewPageControlElement(element)) return false;
     if (element.matches(SKIP_SELECTOR)) return true;
     return Boolean(element.closest(SKIP_SELECTOR));
   }
 
   function isAttributeSkippableElement(element) {
     if (!element || element.nodeType !== Node.ELEMENT_NODE) return false;
-    if (containsCommunityPreviewPageControlElement(element)) return false;
     if (element.matches(ATTR_SKIP_SELECTOR)) return true;
     return Boolean(element.closest(ATTR_SKIP_SELECTOR));
   }
@@ -477,76 +463,6 @@
     if (node === document.body) return true;
     if (node.nodeType === Node.TEXT_NODE) return Boolean(node.parentElement && document.body.contains(node.parentElement));
     return Boolean(node.nodeType === Node.ELEMENT_NODE && document.body.contains(node));
-  }
-
-  function isPreviewPageMenuTerm(value) {
-    const text = normalizeText(value);
-    if (!text) return false;
-    if (PREVIEW_PAGE_MENU_TERMS.has(text)) return true;
-    const match = text.match(/^Page:\s*(.+)$/);
-    return Boolean(match && PREVIEW_PAGE_MENU_TERMS.has(normalizeText(match[1])));
-  }
-
-  function countPreviewPageMenuTermHits(value) {
-    const text = normalizeText(value);
-    if (!text) return 0;
-    let hits = 0;
-    for (const term of PREVIEW_PAGE_MENU_TERMS) {
-      if (term === "Page:") {
-        if (/Page:/.test(text)) hits += 1;
-      } else if (text.includes(term)) {
-        hits += 1;
-      }
-    }
-    return hits;
-  }
-
-  function hasNearbyCommunityPreviewPageMenu(element) {
-    let current = element;
-    for (let depth = 0; current && depth < 8; depth += 1, current = current.parentElement) {
-      const scopeText = normalizeText(current.textContent);
-      if (!scopeText || scopeText.length > 520) continue;
-      if (countPreviewPageMenuTermHits(scopeText) >= 3) return true;
-    }
-    return false;
-  }
-
-  function isCommunityPreviewPageControlElement(element, value) {
-    if (!element || element.nodeType !== Node.ELEMENT_NODE) return false;
-    const text = normalizeText(value !== undefined ? value : element.textContent);
-    if (!isPreviewPageMenuTerm(text)) return false;
-    if (element.closest("canvas,svg,img,video,audio,input,textarea,select,option,script,style,noscript,code,pre,[contenteditable]:not([contenteditable='false']),[role='textbox']")) {
-      return false;
-    }
-
-    const control = element.closest(PREVIEW_PAGE_CONTROL_SELECTOR);
-    if (control) {
-      const controlContext = [
-        control.getAttribute("aria-label") || "",
-        control.getAttribute("title") || "",
-        control.getAttribute("data-testid") || ""
-      ].join(" ");
-      if (
-        control.closest(FIGMA_VIEWPORT_SKIP_SELECTOR)
-        || /^Page:/.test(text)
-        || /page/i.test(controlContext)
-        || hasNearbyCommunityPreviewPageMenu(control)
-      ) {
-        return true;
-      }
-    }
-
-    return Boolean(element.closest(FIGMA_VIEWPORT_SKIP_SELECTOR) && /^Page:/.test(text));
-  }
-
-  function containsCommunityPreviewPageControlElement(element) {
-    if (!element || element.nodeType !== Node.ELEMENT_NODE) return false;
-    if (isCommunityPreviewPageControlElement(element)) return true;
-    const inViewport = element.matches(FIGMA_VIEWPORT_SKIP_SELECTOR) || element.closest(FIGMA_VIEWPORT_SKIP_SELECTOR);
-    if (!inViewport) return false;
-    const text = normalizeText(element.textContent);
-    if (!text || text.length > 1000 || countPreviewPageMenuTermHits(text) < 2) return false;
-    return hasNearbyCommunityPreviewPageMenu(element);
   }
 
   function isIconOnlyControlElement(element) {
@@ -1069,9 +985,7 @@
     if (isProductFilterTerm(node)) return false;
     if (isFontStyleControlTerm(node)) return false;
     const parent = node.parentElement;
-    if (!parent) return false;
-    if (isCommunityPreviewPageControlElement(parent, node.nodeValue)) return true;
-    if (isSkippableElement(parent)) return false;
+    if (!parent || isSkippableElement(parent)) return false;
     if (isLayerTreeContentElement(parent)) return false;
     if (isUserNamedContentElement(parent, node.nodeValue)) return false;
     if (isEditableElement(parent)) return false;

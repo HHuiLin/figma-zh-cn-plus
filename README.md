@@ -10,7 +10,7 @@
 
 - 首页、Recents、产品入口、筛选排序和套餐提示
 - Make 首页、输入区、模式/模型选择、套件和 Skills 弹窗
-- Figma Community 资源详情、评论区固定文案和预览 Page 菜单
+- Figma Community 资源详情和评论区固定文案
 - 弹窗、二级菜单、图标按钮提示和桌面标签菜单
 - 顶部 FigBoost 菜单、官方更新检查和批量导出 `.fig` 文件
 
